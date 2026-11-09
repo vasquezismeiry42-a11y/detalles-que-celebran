@@ -21,14 +21,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             serviciosContainer.replaceChildren();
             data.forEach(servicio => {
                 const card = crear('div', undefined, 'servicio-card');
-                const precio = servicio.precio ? Number(servicio.precio).toLocaleString() : 'Consultar';
                 const enlace = crear('a', 'Pedir ahora', 'btn-primary');
                 enlace.href = 'pedido.html?servicio=' + encodeURIComponent(servicio.nombre);
                 card.append(
                     crear('div', servicio.icono || '🎁', 'servicio-icon'),
                     crear('h3', servicio.nombre),
                     crear('p', servicio.descripcion || ''),
-                    crear('div', 'RD$ ' + precio, 'precio'),
                     enlace
                 );
                 serviciosContainer.appendChild(card);
