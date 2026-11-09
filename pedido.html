@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacer Pedido - Detalles que Celebran</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+        .fila-2{display:grid;grid-template-columns:1fr 1fr;gap:0 1.2rem}
+        .form-sec{margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--border-color);font-size:.72rem;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--primary)}
+        .form-sec:first-child{margin-top:0;border-top:0;padding-top:0}
+        @media(max-width:600px){.fila-2{grid-template-columns:1fr}}
+    
+        .aviso{padding:.9rem 1.1rem;margin-bottom:1.2rem;border:1px solid;font-size:.95rem;animation:entrar .35s ease}
+        .aviso.err{color:#8f2a22;background:#fcefed;border-color:#e3a8a2}
+        .aviso.sacudir{animation:sacudir .4s}
+        @keyframes entrar{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+        @keyframes sacudir{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+        .campo-error input,.campo-error select,.campo-error textarea{border-color:#c0392b !important}
+        .campo-error label{color:#c0392b}
+        .error-campo{display:block;margin-top:.3rem;font-size:.8rem;color:#c0392b;animation:entrar .25s ease}
+        .btn-primary[disabled]{opacity:.8;cursor:wait}
+        .spinner{display:inline-block;width:.9em;height:.9em;margin-right:.6em;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:gira .7s linear infinite;vertical-align:-.1em}
+        @keyframes gira{to{transform:rotate(360deg)}}
+        dialog#exito-modal{border:1px solid var(--border-color);padding:2.5rem 2rem;max-width:460px;width:92%;margin:auto;background:#fff;text-align:center;max-height:92vh;overflow:auto}
+        dialog#exito-modal[open]{animation:modal .45s cubic-bezier(.2,.8,.2,1)}
+        dialog#exito-modal::backdrop{background:rgba(30,20,26,.55)}
+        @keyframes modal{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+        .check{width:76px;height:76px;margin:0 auto 1.2rem;display:block}
+        .check circle{stroke-dasharray:151;stroke-dashoffset:151;animation:trazo .7s .15s ease forwards}
+        .check path{stroke-dasharray:40;stroke-dashoffset:40;animation:trazo .45s .75s ease forwards}
+        @keyframes trazo{to{stroke-dashoffset:0}}
+        #exito-modal h2{font-size:1.8rem;margin-bottom:.6rem;color:var(--primary-dark)}
+        #exito-modal p{color:var(--text-muted)}
+        .resumen{list-style:none;text-align:left;margin:1.4rem 0 1.8rem;border-top:1px solid var(--border-color)}
+        .resumen li{padding:.6rem 0;border-bottom:1px solid var(--border-color);font-size:.95rem}
+        .resumen strong{display:block;font-size:.68rem;font-weight:500;text-transform:uppercase;letter-spacing:.16em;color:var(--primary)}
+        .btn-link{display:block;margin:1rem auto 0;background:none;border:0;color:var(--text-muted);font:inherit;font-size:.85rem;text-decoration:underline;cursor:pointer}
+
+        .hora-sel{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:.5rem}
+        .aviso-helio{border:1px solid #e9d29a;border-left:4px solid #c9a24d;background:#fff9e8;padding:1.1rem 1.3rem;margin-bottom:1.5rem;border-radius:10px;font-size:.88rem;animation:entrar .35s ease}
+        .aviso-helio ul{margin:.6rem 0 0 1.1rem}.aviso-helio li{margin-bottom:.4rem}
+        .chequeo{display:flex !important;gap:.6rem;align-items:flex-start;font-weight:500 !important}
+        .chequeo input{width:auto !important;margin-top:.3rem}
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo-container">
+                <img src="logo.jpg" alt="Logo" class="logo-img">
+                <span>Detalles que Celebran</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="pedido.html" class="active">Hacer Pedido</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="form-container">
+            <h1 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">Realizar Pedido</h1>
+            <form id="pedido-form">
+                <p class="form-sec">Tus datos</p>
+                <div class="form-group"><label for="cliente-nombre">Nombre completo</label><input type="text" id="cliente-nombre" required placeholder="Ej. Ana Pérez"></div>
+                <div class="fila-2">
+                    <div class="form-group"><label for="cliente-telefono">Teléfono / WhatsApp</label><input type="tel" id="cliente-telefono" required placeholder="Ej. 809-555-0000"></div>
+                    <div class="form-group"><label for="cliente-correo">Correo (opcional)</label><input type="email" id="cliente-correo" placeholder="tucorreo@ejemplo.com"></div>
+                </div>
+                <p class="form-sec">Tu pedido</p>
+                <div class="fila-2">
+                    <div class="form-group"><label for="ocasion-select">Ocasión</label><select id="ocasion-select" required><option value="">Elige una ocasión</option><option value="Cumpleaños">Cumpleaños</option><option value="Aniversario">Aniversario</option><option value="Graduación">Graduación</option><option value="Baby shower">Baby shower</option><option value="San Valentín">San Valentín</option><option value="Día de las Madres">Día de las Madres</option><option value="Día de los Padres">Día de los Padres</option><option value="Celebración familiar">Celebración familiar</option><option value="Actividad empresarial">Actividad empresarial</option><option value="Otra">Otra</option></select></div>
+                    <div class="form-group"><label for="servicio-select">Servicio deseado</label><select id="servicio-select" required><option value="">Selecciona un servicio</option></select></div>
+                </div>
+                <div id="aviso-helio" class="aviso-helio" hidden>
+                    <strong>Antes de pedir tus globos con helio, ten en cuenta:</strong>
+                    <ul>
+                        <li><b>Duración:</b> los globos de látex con helio flotan solo unas horas; los metálicos pueden durar varios días. El sol, el calor y el viento los acortan.</li>
+                        <li><b>Niños pequeños:</b> los globos desinflados o reventados pueden causar asfixia. Mantén a los niños supervisados y recoge los restos.</li>
+                        <li><b>No inhales el helio:</b> puede causar mareos y falta de oxígeno.</li>
+                        <li><b>Cuidado con el calor y lo filoso:</b> aléjalos del sol directo, velas, fuego y superficies con punta.</li>
+                        <li><b>Transporte:</b> dentro de un vehículo cerrado y caliente pueden reventar. Recíbelos a la hora acordada.</li>
+                        <li><b>Eventos al aire libre:</b> cuéntanos en los detalles; el viento y el sol cambian cuánto duran.</li>
+                    </ul>
+                    <div class="form-group" style="margin:1rem 0 0"><label class="chequeo"><input type="checkbox" id="helio-ok"> He leído y entiendo estas recomendaciones</label></div>
+                </div>
+                <div class="form-group"><label for="para-quien">¿Para quién es? (opcional)</label><input type="text" id="para-quien" placeholder="Nombre de la persona homenajeada"></div>
+                <div class="form-group"><label for="dedicatoria">Mensaje para la tarjeta (opcional)</label><textarea id="dedicatoria" rows="2" placeholder="Dedicatoria que quieres incluir"></textarea></div>
+                <div class="fila-2">
+                    <div class="form-group"><label for="colores">Colores (opcional)</label><input type="text" id="colores" placeholder="Ej. rosado y dorado"></div>
+                    <div class="form-group"><label for="tematica">Temática (opcional)</label><input type="text" id="tematica" placeholder="Ej. mariposas"></div>
+                </div>
+                <div class="form-group"><label for="presupuesto">Presupuesto aproximado en RD$ (opcional)</label><input type="number" id="presupuesto" min="0" step="100" placeholder="Ej. 3000"></div>
+                <div class="form-group"><label for="cliente-detalles">Otros detalles</label><textarea id="cliente-detalles" rows="3" placeholder="Cualquier idea o indicación extra"></textarea></div>
+                <p class="form-sec">Entrega</p>
+                <div class="fila-2">
+                    <div class="form-group"><label for="cliente-fecha">Fecha de entrega</label><input type="date" id="cliente-fecha" required></div>
+                    <div class="form-group"><label>Hora aproximada (opcional)</label>
+                        <div class="hora-sel">
+                            <select id="hora-h" aria-label="Hora"><option value="">Hora</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+                            <select id="hora-m" aria-label="Minutos"><option>00</option><option>15</option><option>30</option><option>45</option></select>
+                            <select id="hora-ap" aria-label="AM o PM"><option>AM</option><option>PM</option></select>
+                        </div></div>
+                </div>
+                <div class="form-group"><label for="entrega-tipo">¿Cómo lo recibes?</label><select id="entrega-tipo" required><option>Entrega a domicilio</option><option>Recoger en el local</option></select></div>
+                <div class="form-group" id="grupo-direccion"><label for="entrega-direccion">Dirección de entrega</label><input type="text" id="entrega-direccion" placeholder="Calle, sector y una referencia"></div>
+                <div id="aviso" class="aviso err" role="alert" hidden></div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Enviar Pedido</button>
+            </form>
+        </div>
+    </main>
+    <dialog id="exito-modal" aria-labelledby="exito-titulo">
+        <svg class="check" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24" fill="none" stroke="#e0246f" stroke-width="2"/><path fill="none" stroke="#e0246f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 27l8 8 16-17"/></svg>
+        <h2 id="exito-titulo">¡Pedido enviado!</h2>
+        <p id="exito-texto"></p>
+        <ul class="resumen" id="exito-resumen"></ul>
+        <a id="exito-wa" class="btn-primary" target="_blank" rel="noopener">Escribirnos por WhatsApp</a>
+        <button type="button" class="btn-link" id="exito-otro">Hacer otro pedido</button>
+        <a class="btn-link" href="index.html">Volver al inicio</a>
+    </dialog>
+
+    <footer>
+        <p>&copy; Detalles que Celebran. Hecho con cariño</p>
+    </footer>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

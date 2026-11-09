@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios - Detalles que Celebran</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo-container">
+                <img src="logo.jpg" alt="Logo" class="logo-img">
+                <span>Detalles que Celebran</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="servicios.html" class="active">Servicios</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="pedido.html">Hacer Pedido</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1 style="text-align: center; margin-bottom: 2rem; color: var(--primary);">Nuestros Servicios</h1>
+        <div id="servicios-container" class="grid-servicios">
+            <p style="text-align: center; grid-column: 1 / -1;">Cargando servicios...</p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; Detalles que Celebran. Hecho con cariño</p>
+    </footer>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

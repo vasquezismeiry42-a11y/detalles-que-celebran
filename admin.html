@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Detalles que Celebran</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+        .badge.confirmado,.badge.enproceso,.badge.cancelado{border:1px solid currentColor}
+        .badge.confirmado{color:#1e4e8c}.badge.enproceso{color:#6b3f93}.badge.cancelado{color:#8a7f84}
+        td{vertical-align:top;white-space:pre-line}
+        dialog{border:1px solid var(--border-color);padding:2rem;max-width:760px;width:94%;margin:auto;background:#fff;max-height:92vh;overflow:auto}
+        dialog::backdrop{background:rgba(30,20,26,.55)}
+        .hora-sel{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:.5rem}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0 1.2rem}
+        .acciones-modal{display:flex;gap:.8rem;justify-content:flex-end;margin-top:1rem}
+        #editar-msg{color:#b3392f;font-size:.9rem;margin-top:.8rem}
+        @media(max-width:600px){.grid-2{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo-container">
+                <img src="logo.jpg" alt="Logo" class="logo-img">
+                <span>Panel Admin - Detalles que Celebran</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" id="logout-btn" style="color: #dc3545; font-weight: 600;">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="admin-panel" style="max-width: 1300px;">
+        <h1 style="margin-bottom: 1rem; color: var(--primary);">Gestión de Pedidos Recibidos</h1>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead><tr><th>ID</th><th>Cliente</th><th>Pedido</th><th>Entrega</th><th>Presupuesto</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody id="tabla-pedidos-body">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Cargando pedidos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+<section style="margin-top:3.5rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+                <h2 style="margin:0">Servicios</h2>
+                <button type="button" class="btn-primary" id="servicio-nuevo">Agregar servicio</button>
+            </div>
+            <div style="overflow-x:auto">
+                <table>
+                    <thead><tr><th>Orden</th><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Acciones</th></tr></thead>
+                    <tbody id="tabla-servicios-body"><tr><td colspan="5" style="text-align:center">Cargando servicios...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <dialog id="editar-modal">
+        <h2 style="margin-bottom:1.5rem">Editar pedido</h2>
+        <form id="editar-form">
+            <div class="grid-2">
+                <div class="form-group"><label>Cliente</label><input name="cliente" required></div>
+                <div class="form-group"><label>Teléfono</label><input name="telefono" required></div>
+                <div class="form-group"><label>Correo</label><input name="correo" type="email"></div>
+                <div class="form-group"><label>Ocasión</label><select name="ocasion"><option value="">—</option><option value="Cumpleaños">Cumpleaños</option><option value="Aniversario">Aniversario</option><option value="Graduación">Graduación</option><option value="Baby shower">Baby shower</option><option value="San Valentín">San Valentín</option><option value="Día de las Madres">Día de las Madres</option><option value="Día de los Padres">Día de los Padres</option><option value="Celebración familiar">Celebración familiar</option><option value="Actividad empresarial">Actividad empresarial</option><option value="Otra">Otra</option></select></div>
+                <div class="form-group"><label>Servicio</label><select name="servicio" id="editar-servicio" required></select></div>
+                <div class="form-group"><label>¿Para quién es?</label><input name="para_quien"></div>
+                <div class="form-group"><label>Colores</label><input name="colores"></div>
+                <div class="form-group"><label>Temática</label><input name="tematica"></div>
+                <div class="form-group"><label>Presupuesto (RD$)</label><input name="presupuesto" type="number" min="0" step="100"></div>
+                <div class="form-group"><label>Fecha de entrega</label><input name="fecha_entrega" type="date"></div>
+                <div class="form-group"><label>Hora</label><input name="hora_entrega" type="hidden"><div class="hora-sel"><select id="ed-hh"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select><select id="ed-hm"><option>00</option><option>05</option><option>10</option><option>15</option><option>20</option><option>25</option><option>30</option><option>35</option><option>40</option><option>45</option><option>50</option><option>55</option></select><select id="ed-hp"><option>AM</option><option>PM</option></select></div></div>
+                <div class="form-group"><label>Tipo de entrega</label><select name="tipo_entrega"><option value="">—</option><option>Entrega a domicilio</option><option>Recoger en el local</option></select></div>
+            </div>
+            <div class="form-group"><label>Dirección de entrega</label><input name="direccion"></div>
+            <div class="form-group"><label>Mensaje para la tarjeta</label><textarea name="dedicatoria" rows="2"></textarea></div>
+            <div class="form-group"><label>Otros detalles</label><textarea name="detalles" rows="3"></textarea></div>
+            <div class="form-group"><label>Estado</label><select name="estado" required><option>Pendiente</option><option>Confirmado</option><option>En proceso</option><option>Completado</option><option>Cancelado</option></select></div>
+            <p id="editar-msg" role="alert"></p>
+            <div class="acciones-modal">
+                <button type="button" class="btn-sm" id="editar-cancelar">Cancelar</button>
+                <button type="submit" class="btn-primary">Guardar cambios</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="servicio-modal">
+        <h2 id="servicio-titulo" style="margin-bottom:1.5rem">Servicio</h2>
+        <form id="servicio-form">
+            <div class="form-group"><label>Nombre</label><input name="nombre" required maxlength="80"></div>
+            <div class="form-group"><label>Descripción (aquí puedes incluir advertencias o indicaciones)</label><textarea name="descripcion" rows="5"></textarea></div>
+            <div class="grid-2">
+                <div class="form-group"><label>Precio en RD$ (opcional)</label><input name="precio" type="number" min="0" step="50"></div>
+                <div class="form-group"><label>Orden en que aparece</label><input name="orden" type="number" min="0" step="1"></div>
+            </div>
+            <p id="servicio-msg" style="color:#b3392f;font-size:.9rem" role="alert"></p>
+            <div class="acciones-modal">
+                <button type="button" class="btn-sm" id="servicio-cancelar">Cancelar</button>
+                <button type="submit" class="btn-primary">Guardar servicio</button>
+            </div>
+        </form>
+    </dialog>
+
+    <footer>
+        <p>&copy; 2026 Detalles que Celebran. Hecho con cariño</p>
+    </footer>
+    <script src="api.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

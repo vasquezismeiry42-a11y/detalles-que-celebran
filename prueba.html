@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de conexión</title>
+    <style>
+        body { font-family: sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
+        p { margin: .5rem 0; word-break: break-word; }
+    </style>
+</head>
+<body>
+    <h1>Prueba de conexión</h1>
+    <div id="salida"></div>
+
+    <script>
+        const salida = document.getElementById('salida');
+        const linea = (ok, texto) => {
+            const p = document.createElement('p');
+            p.textContent = (ok ? '✅ ' : '❌ ') + texto;
+            salida.append(p);
+        };
+        const cargar = (src) => new Promise(resolver => {
+            const s = document.createElement('script');
+            s.src = src;
+            s.onload = () => resolver(true);
+            s.onerror = () => resolver(false);
+            document.head.append(s);
+        });
+
+        (async () => {
+            linea(true, 'Dirección de esta página: ' + location.href);
+
+            const lib = await cargar('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js');
+            linea(lib && typeof supabase !== 'undefined', 'Librería de Supabase (internet)');
+
+            const api = await cargar('api.js');
+            linea(api, 'Archivo api.js encontrado en la misma carpeta que esta página');
+
+            const conexion = typeof supabaseClient !== 'undefined';
+            linea(conexion, 'Conexión con Supabase creada (api.js)');
+            if (!conexion) return;
+
+            try {
+                const { data, error } = await supabaseClient.from('servicios').select('*').order('orden');
+                if (error) throw error;
+                linea(true, 'Servicios encontrados: ' + data.length);
+            } catch (err) {
+                linea(false, 'Consulta a servicios: ' + (err.message || err));
+            }
+        })();
+    </script>
+</body>
+</html>

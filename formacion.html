@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formación & Experiencia - Detalles que Celebran</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .cert-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(214, 51, 132, 0.12);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: left;
+        }
+        .cert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(214, 51, 132, 0.15);
+        }
+        .cert-img-wrapper {
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            cursor: pointer;
+            position: relative;
+        }
+        .cert-img-wrapper img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .cert-img-wrapper:hover img {
+            transform: scale(1.06);
+        }
+        .badge-cert {
+            display: inline-block;
+            background: linear-gradient(135deg, #d63384, #b02a6f);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Modal Lightbox para fotos completas */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.88);
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+        .lightbox-content {
+            max-width: 92%;
+            max-height: 85vh;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            object-fit: contain;
+        }
+        .lightbox-cerrar {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .lightbox-cerrar:hover {
+            color: var(--primary-light, #ff8da1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo-container">
+                <img src="logo.jpg" alt="Logo de Detalles que Celebran" class="logo-img" style="width: 55px; height: 55px;">
+                <span>Detalles que Celebran</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="nosotros.html">Nosotros</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+                <li><a href="formacion.html" class="active">Formación</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="pedido.html">Hacer Pedido</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main style="max-width: 1000px; margin: 0 auto; padding: 3rem 1rem;">
+        
+        <!-- Encabezado de la Sección -->
+        <div style="text-align: center; margin-bottom: 3.5rem;">
+            <span style="color: var(--primary, #d63384); font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.9rem;">Pasión & Aprendizaje Continuo</span>
+            <h1 style="font-family: 'Playfair Display', serif; color: var(--primary-dark, #801b4e); font-size: 2.8rem; margin: 0.5rem 0 1rem 0;">Mi Formación & Certificados</h1>
+            <p style="color: var(--text-muted, #6c757d); font-size: 1.1rem; max-width: 650px; margin: 0 auto; line-height: 1.6;">
+                Cada detalle y decoración que diseño está respaldado por mis certificaciones oficiales para garantizarte siempre resultados impecables.
+            </p>
+        </div>
+
+        <!-- Grid de 2 Certificados -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2.5rem; justify-content: center;">
+            
+            <!-- CERTIFICADO 1 -->
+            <div class="cert-card">
+                <div class="cert-img-wrapper">
+                    <img src="certificado 1.jpeg" alt="Primer Certificado" onclick="abrirLightbox(this)">
+                </div>
+                <span class="badge-cert">Certificación Oficial</span>
+                <h3 style="font-family: 'Playfair Display', serif; color: var(--primary-dark, #801b4e); font-size: 1.35rem; margin: 0.4rem 0;">Certificado de decoraciones con Globos</h3>
+                <p style="color: var(--text-muted, #6c757d); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.8rem;">
+                  Capacitación en decoración profesional con globos, donde adquirí conocimientos y habilidades creativas para diseñar, elaborar y montar decoraciones para diferentes tipos de celebraciones y eventos especiales. </p>
+                <small style="color: #888; font-weight: 500;">📸 Toca la foto para verla completa</small>
+            </div>
+
+            <!-- CERTIFICADO 2 -->
+            <div class="cert-card">
+                <div class="cert-img-wrapper">
+                    <img src="certificado 2.jpeg" alt="Segundo Certificado" onclick="abrirLightbox(this)">
+                </div>
+                <span class="badge-cert">Certificación Oficial</span>
+                <h3 style="font-family: 'Playfair Display', serif; color: var(--primary-dark, #801b4e); font-size: 1.35rem; margin: 0.4rem 0;">Diploma De Emprendimiento Y Liderazgo</h3>
+                <p style="color: var(--text-muted, #6c757d); font-size: 0.95rem; line-height: 1.5; margin-bottom: 0.8rem;">
+                    Reconocimiento por completar satisfactoriamente el programa Yo Emprendedor 2026, fortaleciendo mis habilidades en emprendimiento, liderazgo, creatividad y desarrollo de ideas de negocio, así como mis capacidades para convertir proyectos en oportunidades de crecimiento.</p>
+                <small style="color: #888; font-weight: 500;">📸 Toca la foto para verla completa</small>
+            </div>
+
+        </div>
+
+        <!-- Banner de Confianza al Cliente -->
+        <div style="background: linear-gradient(135deg, #fff0f5, #ffe4ec); border-radius: 20px; padding: 2.5rem 1.5rem; text-align: center; margin-top: 4rem; border: 1px solid rgba(214, 51, 132, 0.15);">
+            <h2 style="font-family: 'Playfair Display', serif; color: var(--primary-dark, #801b4e); font-size: 1.8rem; margin-bottom: 0.8rem;">¿Tienes un evento especial en mente?</h2>
+            <p style="color: #555; max-width: 650px; margin: 0 auto 1.5rem auto; font-size: 1rem;">
+                Con la tranquilidad de estar en manos capacitadas, llevamos tus ideas al siguiente nivel.
+            </p>
+            <a href="pedido.html" class="btn-primary" style="padding: 0.8rem 2rem; font-size: 1rem; text-decoration: none; display: inline-block;">Cotizar mi Decoración</a>
+        </div>
+
+    </main>
+
+    <!-- Modal Lightbox para Ampliar Fotos -->
+    <div id="lightbox-modal" class="lightbox-modal" onclick="cerrarLightbox()">
+        <span class="lightbox-cerrar" onclick="cerrarLightbox()">&times;</span>
+        <img id="lightbox-img" class="lightbox-content" alt="Fotografía ampliada de certificado">
+    </div>
+
+    <footer>
+        <p>&copy; Detalles que Celebran. Hecho con cariño 💖</p>
+    </footer>
+
+    <!-- Script Lightbox incorporado -->
+    <script>
+        function abrirLightbox(imagen) {
+            const modal = document.getElementById('lightbox-modal');
+            const modalImg = document.getElementById('lightbox-img');
+            modal.style.display = 'flex';
+            modalImg.src = imagen.src;
+        }
+
+        function cerrarLightbox() {
+            document.getElementById('lightbox-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
