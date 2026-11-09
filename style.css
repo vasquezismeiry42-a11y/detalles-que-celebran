@@ -145,3 +145,4 @@ main div[style*="var(--primary-light, #fce7f3)"]{background:var(--tint) !importa
   .form-container{padding:1.6rem}
   .puntos{gap:1.2rem}
 }
+.precio { display: none; }
