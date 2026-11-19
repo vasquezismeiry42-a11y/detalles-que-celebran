@@ -250,17 +250,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .replace(/\D/g, '')
                 .length;
 
-            // Eliminar letras y otros caracteres.
-            // Conservar solamente los primeros 10 números.
-
             const numeros = telefono.value
                 .replace(/\D/g, '')
                 .slice(0, 10);
 
             let formato = numeros;
-
-            // Colocar el primer guion después de los 3 primeros números.
-            // Colocar el segundo guion después de los siguientes 3.
 
             if (numeros.length > 6) {
 
@@ -279,15 +273,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             telefono.value = formato;
 
-            // Comprobar que tenga exactamente 10 números.
-
             telefono.setCustomValidity(
                 numeros.length === 10
                     ? ''
                     : 'El teléfono debe contener exactamente 10 números.'
             );
-
-            // Mantener el cursor en una posición lógica.
 
             let nuevaPosicion = 0;
 
@@ -495,6 +485,35 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         // =====================================
+        // CONSTRUIR ENLACE DE WHATSAPP
+        // =====================================
+
+        const construirUrlWhatsApp = (pedido, entregaTexto) => {
+
+            const mensaje = [
+                '¡Hola *Detalles que Celebran*! ✨ Acabo de hacer un pedido:',
+                `• *Cliente:* ${pedido.cliente}`,
+                `• *Teléfono:* ${pedido.telefono}`,
+                `• *Servicio:* ${pedido.servicio}`,
+                pedido.ocasion ? `• *Ocasión:* ${pedido.ocasion}` : '',
+                pedido.para_quien ? `• *Para:* ${pedido.para_quien}` : '',
+                `• *Entrega:* ${entregaTexto}`,
+                pedido.direccion ? `• *Dirección:* ${pedido.direccion}` : '',
+                pedido.colores ? `• *Colores:* ${pedido.colores}` : '',
+                pedido.tematica ? `• *Temática:* ${pedido.tematica}` : '',
+                pedido.presupuesto ? `• *Presupuesto:* RD$${pedido.presupuesto}` : '',
+                pedido.dedicatoria ? `• *Dedicatoria:* ${pedido.dedicatoria}` : '',
+                pedido.detalles ? `• *Detalles:* ${pedido.detalles}` : ''
+            ]
+                .filter(Boolean)
+                .join('\n');
+
+            return 'https://wa.me/18092682392?text=' + encodeURIComponent(mensaje);
+
+        };
+
+
+        // =====================================
         // MOSTRAR CONFIRMACIÓN DEL PEDIDO
         // =====================================
 
@@ -550,21 +569,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             );
 
 
-            // Preparar mensaje para WhatsApp.
+            // Asignar enlace de WhatsApp al botón del modal.
 
-            const mensaje =
-                'Hola, acabo de hacer un pedido en la página.\nNombre: ' +
-                pedido.cliente +
-                '\nServicio: ' +
-                pedido.servicio +
-                '\nEntrega: ' +
-                entrega;
+            const urlWhatsApp = construirUrlWhatsApp(pedido, entrega);
 
-            document.getElementById('exito-wa').href =
-                'https://wa.me/18092682392?text=' +
-                encodeURIComponent(mensaje);
+            document.getElementById('exito-wa').href = urlWhatsApp;
 
             modal.showModal();
+
+            return urlWhatsApp;
 
         };
 
@@ -725,7 +738,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
             // =====================================
-            // GUARDAR PEDIDO EN SUPABASE
+            // GUARDAR PEDIDO EN SUPABASE Y WHATSAPP
             // =====================================
 
             try {
@@ -737,9 +750,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (error) throw error;
 
 
-                // Mostrar confirmación.
+                // Mostrar confirmación y obtener enlace de WhatsApp.
 
-                mostrarExito(pedido, horaTexto);
+                const urlWhatsApp = mostrarExito(pedido, horaTexto);
 
 
                 // Reiniciar formulario.
@@ -749,6 +762,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alternarDireccion();
 
                 alternarHelio();
+
+
+                // Abrir WhatsApp directamente con el mensaje listo.
+
+                window.open(urlWhatsApp, '_blank', 'noopener,noreferrer');
 
 
             } catch (err) {
